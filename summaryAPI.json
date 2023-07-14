@@ -1,0 +1,39 @@
+{
+    "batchSummary": [
+        {
+            "area": "mainframe",
+            "totalJobs": 3000,
+            "completedJobs": 1000,
+            "totalMilestones" : 80,
+            "completedMilestones": 20,
+            "delayedMilestones": 10,
+            "ETA": "04:25",
+            "percentComplete": 30
+        },
+
+        {
+            "area": "distributed",
+            "totalJobs": 2000,
+            "completedJobs": 100,
+            "totalMilestones" : 80,
+            "completedMilestones": 20,
+            "delayedMilestones": 10,
+            "ETA": "03:25",
+            "percentComplete": 25
+            
+        },
+
+        {
+            "area": "digital_direct",
+            "totalJobs": 1000,
+            "completedJobs": 20,
+            "totalMilestones" : 60,
+            "completedMilestones": 20,
+            "delayedMilestones": 2,
+            "ETA": "06:25",
+            "percentComplete": 25
+        }
+
+
+    ]
+}

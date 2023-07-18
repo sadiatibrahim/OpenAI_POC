@@ -1,0 +1,9 @@
+{
+    "delayedMilestones": [
+        {
+            "jobName": "PMGSDDET",
+            "schedulingPlatform": "mainframe/distributed",
+            "desc": "we have a table/api for getting desc for all milestones."
+        }
+    ]
+}

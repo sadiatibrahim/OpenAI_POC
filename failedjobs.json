@@ -1,0 +1,11 @@
+{
+    "failedjobs":[
+        {
+            "jobName": "ABCDEFG",
+            "schedulingplatform": "mainframe/distributed",
+            "actualStartTime": "8:00",
+            "actualEndTime": "10:00",
+            "status": "failed"
+        }
+    ]
+}

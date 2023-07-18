@@ -1,0 +1,14 @@
+{
+    "functionsImpacted": [
+        "ANH",
+        "AHS",
+        "Gain and Loss Summary"
+    ],
+
+    "applicationsImpacted": [
+        "DataViz",
+        "BPM",
+        "Data distribution Hub",
+        "EDW Core Load"
+    ]
+}

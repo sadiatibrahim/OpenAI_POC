@@ -3,14 +3,22 @@ import requests
 import json
 import os
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 from functionclassifier import FunctionClassifier
 
 OPENAI_API_KEY = os.environ.get("SECRET_KEY")
+
+date = datetime.now().date()
+previous_date = date - timedelta(days=1)
+
 def get_batch_progress(query):
+    #make an API call
+    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/batch-summary?date={previous_date}"
+    # data = requests.get(url)
+
 
     #Assume this process is connecting to API and getting json data
-    with open('OpenAI_POC\summaryAPI.json') as file:
+    with open(r'OpenAI_POC\summaryAPI.json') as file:
         data = json.load(file)
 
     #call the function that summarizes the data
@@ -54,8 +62,13 @@ def get_summary_batch_progress(json_data, query):
 
 
 def get_business_function(job_name):
+
+    # #make an API call
+    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/business-functions?date={previous_date}&job={job_name}"
+    # data = requests.get(url)
+
     #Assume this process is connecting to API and getting json data
-    with open('OpenAI_POC\businessfunctionsAPI.json') as file:
+    with open(r'OpenAI_POC\businessfunctionsAPI.json') as file:
         data = json.load(file)
 
     #call the function that summarizes the data
@@ -65,7 +78,7 @@ def get_business_function(job_name):
 
 def get_summary_business_functions(json_data, job_name):
     prompt = f"given this json data: {json_data}, write a summary of this json data in sentences. you can start your sentence by saying\
-          'The business functions that would be impacted if {job_name} is delayed is'. when you are done reading\
+          'The business functions that are impacted because {job_name} is delayed are'. when you are done reading\
           the business functions, continue your sentence with 'and application impacted are'\
             then summarize the applicationsImpacted data list in the json.\
             your summary should be concise and formal."
@@ -91,19 +104,25 @@ def get_summary_business_functions(json_data, job_name):
     # return result.text
 
 
-def get_failed_jobs(query):
+def get_failed_jobs(job_name):
+
+    # #Make an API call
+    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/failure-analysis?date={previous_date}&job={job_name}"
+    # data = requests.get(url)
+
     #Assume this process is connecting to API and getting json data
-    with open('OpenAI_POC\failedjobs.json') as file:
+    with open(r'OpenAI_POC\failedjobs.json') as file:
         data = json.load(file)
 
-    result = get_critical_job_failure(data, query)
+    result = get_critical_job_failure(data, job_name)
     return result
 
     
-def get_critical_job_failure(json_data, query):
-    prompt = f"take a look at this json data: {json_data}/n give me the list of jobs that failed. i.e \
-        return the name of the job that has 'failed' as status. for example, if a job name is 'PPEET', and has a status 'failed', your \
-        sentence should be 'Yes, the list of critical jobs that failed are' "
+def get_critical_job_failure(json_data, job_name):
+    prompt = f"This json data:{json_data} contains failed jobs that caused this job {job_name} to be held up.The json data has the information about failed jobs that \
+        is holding up {job_name}. only talk about the name of the failed job and nothing else in your sentences.\
+        Note: the job that failed in the json is a predecessor to this job {job_name}' make a reference to that in your sentence.\
+        you can start your sentence with '{job_name} is being delayed because (insert job name gotten from json here) failed.' your response should be concise and formal."
     
     headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
     messages = [{"role": "user", "content": prompt}]
@@ -126,13 +145,24 @@ def get_critical_job_failure(json_data, query):
 
 
 def get_reason(job_name):
+
+    #Make an API call
+    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/impact-analysis?date={previous_date}&job={job_name}"
+    # data = requests.get(url)
+
     #Assume this process is connecting to API and getting json data
-    with open('OpenAI_POC\reason_failed_job.json') as file:
+
+    with open(r'OpenAI_POC\reason_failed_job.json') as file:
         data = json.load(file)
 
+    result = get_reason_summary(data, job_name)
+    return result
 
-    prompt = f"Using this json data: {data}/n look at the key value pairs and return the value of the key 'reason', and start your sentence with \
-        'The reason why {job_name} failed is"
+
+
+def get_reason_summary(json_data, job_name):
+
+    prompt = f"Using this json data: {json_data}/n tell me the reason why this job: {job_name}failed. your sentence should be concise and formal."
     
     headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
     messages = [{"role": "user", "content": prompt}]
@@ -152,6 +182,44 @@ def get_reason(job_name):
         return {'status': -1, 'error': 'Error occured' + str(e)}
     
     return {'status':0, 'result': result.text}
+
+
+def get_delayed_milestones(query):
+
+    #make an API call
+    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/delayed-milestones?date={previous_date}"
+    # data = requests.get(url)
+
+    with open(r'OpenAI_POC\delayedmilestones.json') as file:
+        data = json.load(file)
+
+    result = get_delayed_milestones_summary(data, query)
+    return result
+
+    
+def get_delayed_milestones_summary(json_data, query):
+    prompt = f"Give a summary of this json data {json_data}\n\
+        your answer should be a sentence, and it should be concise and formal. you can use this query: {query} as a reference for your sentence."
+    
+    headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
+    messages = [{"role": "user", "content": prompt}]
+
+    payload = {"model" : "gpt-3.5-turbo-0613",
+               "messages" : messages,
+               "temperature" : 0.0,
+               "top_p" : 1.0,
+               "frequency_penalty": 0.0,
+               "presence_penalty" : 0.0,
+               "max_tokens" : 1000
+    }
+    data = json.dumps(payload).encode('utf-8')
+    try:
+        result = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(payload))
+    except Exception as e:
+        return {'status': -1, 'error': 'Error occured' + str(e)}
+    
+    return {'status':0, 'result': result.text}
+
 
 
 def main_function_call(query):
@@ -176,7 +244,6 @@ def main_function_call(query):
     data = json.dumps(payload).encode('utf-8')
     resp = requests.post(url, headers=headers, data=data)
     resp_json = json.loads(resp.text)
-    print(resp_json)
 
     return resp_json
 

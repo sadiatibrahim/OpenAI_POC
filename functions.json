@@ -15,6 +15,22 @@
                 },
 
                 {
+                    "name": "get_delayed_milestones",
+                    "description": "Called when the prompt specifically asks if there are any milestones delayed. it takes in a query and generates a response",
+                    "parameters":{
+                        "type": "object",
+                        "properties":{
+                            "query":{
+                                "type": "string",
+                                "description": "A query is a statement that searches for delayed milestones. Uses the exact same question as the user prompted as input."
+                            }
+                        },
+                        "required": ["query"]
+                    }
+                },
+
+
+                {
                     "name": "get_business_function",
                     "description": "Get a list of business functions that are impacted because of a delayed job XXXXX. note that job XXXXX is just a placeholder. job XXXXX can be any job name such as PPGET, ABCDE",
                     "parameters": {
@@ -31,13 +47,13 @@
 
                 {
                     "name": "get_failed_jobs",
-                    "description": "It takes in a query as an input and generates a response. it can be used to search for any critical job that failed today or if there are any jobs that failed.",
+                    "description": " Called when the prompt specifically says 'what's holding up XXXXX' XXXXX is a placehollder for a job name. It can be ABCDE or ABCD. It takes in a query as an input and generates a response. ",
                     "parameters":{
                         "type": "object",
                         "properties": {
-                            "query":{
+                            "job_name":{
                                 "type": "string",
-                                "description": "A query is a statement that searches for Batch Jobs' progress. Uses the exact same question as the user prompted as input"
+                                "description": "One Job name such as ABCDE"
                             }
                             
                         },
@@ -58,8 +74,69 @@
                         },
                         "required": ["job_name"]
                     }
-                }
+                },
 
+                {
+                    "name": "get_standard_procedure",
+                    "description": "Takes in a query as an input and generates a response about standard operating procedure. It is useful for searching for standard operating procedure of an error",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query":{
+                                "type": "string",
+                                "description": "A query is a statement that searches for the standard operating procedure of an error"
+                            }
+                        },
+                        "required": ["query"]
+                    }
+                },
+
+                {
+                    "name": "get_incidents",
+                    "description": "Called when the prompts specifically asks about how many incidents/abends have happened because of  XXXX. XXXX is a placeholder for a job name, it could be ABCDE",
+                    "parameters":{
+                        "type": "object",
+                        "properties": {
+                            "query":{
+                                "type": "string",
+                                "description": "A query is a statement that searches for how many incidents/abends have happened because of a XXX job. XXXX is a placeholder for any job name."
+                            }
+                        },
+                        "required": ["query"]
+                    }
+                },
+
+                
+                {
+                    "name": "file_contention",
+                    "description": "Takes in a query as an input and generates a response. Useful for searching for the last time file contention resulted in batch abends",
+                    "parameters":{
+                        "type": "object",
+                        "properties" : {
+                            "query":{
+                                "type": "string",
+                                "description": " A query is a statement that searches for the last time file contention resulted in batch abends."
+
+                            }
+                        },
+                        "required": ["query"]
+                    }
+                },
+
+                {
+                    "name": "get_DTCC_files",
+                    "description": "Get the number of files that are gotten from DTCC",
+                    "parameters":{
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type":"string",
+                                "description": "A query is a statement that asks for how many files that are gotten from DTCC"
+                            }
+                        },
+                        "required": ["query"]
+                    }
+                }
 
 
 

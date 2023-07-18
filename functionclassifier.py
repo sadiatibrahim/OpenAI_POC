@@ -10,7 +10,7 @@ OPENAI_API_KEY = os.environ.get("SECRET_KEY")
 
 class FunctionClassifier():
     def __init__(self):
-        with open('OpenAI_POC\functionclassifier.py') as file:
+        with open(r'OpenAI_POC\functions.json') as file:
             self.data = json.load(file)
         self.llm = ChatOpenAI(openai_api_key= OPENAI_API_KEY, temperature=0.0)
     
@@ -26,15 +26,15 @@ class FunctionClassifier():
             input_variables=['function_desc', 'query'],
             template= """
             Provided this list of function definitions Definitions :{function_desc} , take this query Query : {query} and match the query
-                         with a single function's description. if it is found that the query does not match a single function's description,
-                         return -1. Otherwise, ensure that the query matches the first of the query that you as an AI can 
-                         generate a classification for which query matches the definition. If a match is found, return the index of the function description from the list.Make sure to process\
-                         each decription carefully when classifying which description matches the query. Return only the index of the function description from the list as an output. Do not give me explanations\.""",
+            with a single function's description. if it is found that the query does not match a single function's description,
+            return -1. Otherwise, ensure that the query matches the first of the query that you as an AI can 
+            generate a classification for which query matches the definition. If a match is found, return the index of the function description from the list.Make sure to process\
+            each decription carefully when classifying which description matches the query. Do not give me explanations, I want only the index of the list that matches the query.\.""",
         )
 
         chain = LLMChain(llm=self.llm, prompt=prompt)
         result = chain.run(function_desc= str(self.get_function_descriptions()), query=query)
-        print(result)
+        
 
         last_word = result.split()[-1]
         # The string containing the index value

@@ -20,7 +20,6 @@ class FunctionClassifier():
     
     def retrieve_function(self, query, function_buffer_memory: ConversationBufferMemory):
         print(f'--{datetime.now()}--FunctionClassifier::retrieve_function')
-        print(f'--{datetime.now()}--FunctionClassifier::chat_history::',function_buffer_memory.load_memory_variables({}))
         function_desc = self.get_function_descriptions()
         prompt = PromptTemplate(
             input_variables=['chat_history','function_desc', 'query'],
@@ -61,11 +60,6 @@ class FunctionClassifier():
         result = chain.run(function_desc= str(self.get_function_descriptions()), query=query, chat_history=function_buffer_memory.load_memory_variables({})) 
         trimmed_result = result.split('\n')
         filtered_array = list(filter(lambda item: item != '', trimmed_result))
-
-        print('FunctionClassifier::Length of Result:',len(filtered_array))
-        print('\033[94m')
-        print(f'\n\n--{datetime.now()}--' + str(filtered_array[-3:]))
-        print('\033[32m')        
         
         last_word = result.split()[-1]
         function_buffer_memory.save_context({"Human":query}, {"AI":str(trimmed_result[-3:])})

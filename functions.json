@@ -1,5 +1,4 @@
 [
-<<<<<<< HEAD
     {
         "name": "get_batch_progress",
         "description": "It takes in a query as an input and generates a response. Useful for searching for the progress of Batch",
@@ -9,145 +8,6 @@
                 "query": {
                     "type": "string",
                     "description": "A query is a statement that searches for Batch Jobs' progress. Uses the exact same question as the user prompted as input"
-=======
-                {
-                    "name": "get_batch_progress",
-                    "description": "It takes in a query as an input and generates a response. Useful for searching for the progress of Batch",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "query":{
-                                "type": "string",
-                                "description": "A query is a statement that searches for Batch Jobs' progress. Uses the exact same question as the user prompted as input"
-                            }
-                        },
-                        "required": ["query"]
-                    }
-                },
-
-                {
-                    "name": "get_delayed_milestones",
-                    "description": "Called when the prompt specifically asks if there are any milestones delayed. it takes in a query and generates a response",
-                    "parameters":{
-                        "type": "object",
-                        "properties":{
-                            "query":{
-                                "type": "string",
-                                "description": "A query is a statement that searches for delayed milestones. Uses the exact same question as the user prompted as input."
-                            }
-                        },
-                        "required": ["query"]
-                    }
-                },
-
-
-                {
-                    "name": "get_business_function",
-                    "description": "Get a list of business functions that are impacted because of a delayed job XXXXX. note that job XXXXX is just a placeholder. job XXXXX can be any job name such as PPGET, ABCDE",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "job_name":{
-                                "type": "string",
-                                "description": "One Job name such as PPXTET."
-                            }
-                        },
-                        "required": ["job_name"]
-                    }
-                },
-
-                {
-                    "name": "get_failed_jobs",
-                    "description": " Called when the prompt specifically says 'why a milestone job XXXXX is delayed.' XXXXX is a placehollder for a job name. It can be ABCDE or ABCD. It takes in a query as an input and generates a response. ",
-                    "parameters":{
-                        "type": "object",
-                        "properties": {
-                            "job_name":{
-                                "type": "string",
-                                "description": "One Job name such as ABCDE"
-                            }
-                            
-                        },
-                        "required": ["job_name"]
-                    }
-                },
-
-                {
-                    "name": "get_reason",
-                    "description": "Used to get the reason for failure for a specific job.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "job_name":{
-                                "type": "string",
-                                "description": "takes Only one job name. Job names such as PPETSD"
-                            }
-                        },
-                        "required": ["job_name"]
-                    }
-                },
-
-                {
-                    "name": "get_standard_procedure",
-                    "description": "Takes in a query as an input and generates a response about standard operating procedure. It is useful for searching for standard operating procedure of an error",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "query":{
-                                "type": "string",
-                                "description": "A query is a statement that searches for the standard operating procedure of an error"
-                            }
-                        },
-                        "required": ["query"]
-                    }
-                },
-
-                {
-                    "name": "get_incidents",
-                    "description": "Called when the prompts specifically asks about how many incidents/abends have happened because of  XXXX. XXXX is a placeholder for a job name, it could be ABCDE",
-                    "parameters":{
-                        "type": "object",
-                        "properties": {
-                            "query":{
-                                "type": "string",
-                                "description": "A query is a statement that searches for how many incidents/abends have happened because of a XXX job. XXXX is a placeholder for any job name."
-                            }
-                        },
-                        "required": ["query"]
-                    }
-                },
-
-                
-                {
-                    "name": "file_contention",
-                    "description": "Takes in a query as an input and generates a response. Useful for searching for the last time file contention resulted in batch abends",
-                    "parameters":{
-                        "type": "object",
-                        "properties" : {
-                            "query":{
-                                "type": "string",
-                                "description": " A query is a statement that searches for the last time file contention resulted in batch abends."
-
-                            }
-                        },
-                        "required": ["query"]
-                    }
-                },
-
-                {
-                    "name": "get_DTCC_files",
-                    "description": "Get the number of files that are gotten from DTCC",
-                    "parameters":{
-                        "type": "object",
-                        "properties": {
-                            "query": {
-                                "type":"string",
-                                "description": "A query is a statement that asks for how many files that are gotten from DTCC"
-                            }
-                        },
-                        "required": ["query"]
-                    }
->>>>>>> 44e66483ae59a091d48fdad9f48c8b3825c79d86
                 }
             },
             "required": [
@@ -173,7 +33,7 @@
     },
     {
         "name": "get_business_function",
-        "description": "Get a list of business functions that are impacted because of a delayed job XXXXX. note that job XXXXX is just a placeholder. job XXXXX can be any job name such as PPGET, ABCDE. This is not an open ended imapct analysis method, it only answers if a specific job name is provided to calculate its business impact.",
+        "description": "Get a list of business functions that are impacted because of a delayed job XXXXX. note that job XXXXX is just a placeholder. job XXXXX can be any job name such as PPGET, ABCDE",
         "parameters": {
             "type": "object",
             "properties": {
@@ -189,7 +49,7 @@
     },
     {
         "name": "get_failed_jobs",
-        "description": " Called when the prompt specifically says 'what's holding up XXXXX' XXXXX is a placehollder for a job name. It can be ABCDE or ABCD. It takes in a query as an input and generates a response. ",
+        "description": " Called when the prompt specifically says 'why a milestone job XXXXX is delayed.' XXXXX is a placehollder for a job name. It can be ABCDE or ABCD. It takes in a query as an input and generates a response. ",
         "parameters": {
             "type": "object",
             "properties": {
@@ -221,7 +81,7 @@
     },
     {
         "name": "get_standard_procedure",
-        "description": "Takes in a user query as an input and generates a response about standard operating procedure. It is useful for searching for standard operating procedure of an error. This contains next steps and explaination for some issue user might be facing and something not working as expected or they are confused about something, this function can lookup a handbook for standard operating procedure during those scenarios and suggest a fix along with next steps. User might ask a follow up for their suggested fix, some Database queries or some commands to run, those can also be found here in the function",
+        "description": "Takes in a query as an input and generates a response about standard operating procedure. It is useful for searching for standard operating procedure of an error",
         "parameters": {
             "type": "object",
             "properties": {

@@ -274,13 +274,9 @@ def main():
         if(query_str=="q" or query_str=="quit"):
             break
         
-        print('\033[32m')
-
         #function calls
         function_call_output = main_function_call(query_str)
-        print('\033[33m')
         print(function_call_output)
-        print('\033[32m')
         
         function_name = eval(function_call_output['choices'][0]['message']['function_call']['name'])
         function_argument = json.loads(function_call_output['choices'][0]['message']['function_call']['arguments'])
@@ -288,7 +284,6 @@ def main():
         print(f"--{datetime.now()}--main::calling the selected function")        
         result = (function_name(**function_argument))
         
-        print('\033[0m')
         print("\n",result)
     
 main()

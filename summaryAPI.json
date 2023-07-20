@@ -1,37 +1,45 @@
 {
     "batchSummary": [
         {
-            "area": "mainframe",
+            "criticalpath": "mainframe",
+            "Division": "Wealth Management",
             "totalJobs": 3000,
             "completedJobs": 1000,
             "totalMilestones" : 80,
             "completedMilestones": 20,
-            "delayedMilestones": 10,
+            "delayedMilestones": 0,
             "ETA": "04:25",
             "percentComplete": 30
         },
 
         {
-            "area": "distributed",
+            "Criticalpath": "distributed",
+            "Division": "Wealth Management",
             "totalJobs": 2000,
             "completedJobs": 100,
             "totalMilestones" : 80,
             "completedMilestones": 20,
-            "delayedMilestones": 10,
+            "delayedMilestones": 0,
             "ETA": "03:25",
-            "percentComplete": 25
+            "percentComplete": 25,
+            "status": "AMBER"
             
         },
 
         {
-            "area": "digital_direct",
+            "Criticalpath": "digital_direct",
+            "Division":"Wealth Management",
             "totalJobs": 1000,
             "completedJobs": 20,
             "totalMilestones" : 60,
             "completedMilestones": 20,
-            "delayedMilestones": 2,
+            "delayedMilestones": 1,
+            "delayedmilestoneJobName": "PMGSDDET",
+            "businessfunctionsImpacted": ["DataViz", "Gain and Loss Summary"],
+            "milestone_description": "purchase and sales -Edit",
             "ETA": "06:25",
-            "percentComplete": 25
+            "percentComplete": 25,
+            "status": "GREEN"
         }
 
 

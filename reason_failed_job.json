@@ -1,12 +1,12 @@
 {
     "failedjobs":[
         {
-            "jobName": "ABCDEFG",
+            "jobName": "PAAAD151",
             "schedulingplatform": "mainframe/distributed",
             "actualStartTime": "8:00",
             "actualEndTime": "10:00",
             "status": "failed",
-            "reason": "Duplicate transactions"
+            "reason": "File Contention"
         }
     ]
 }

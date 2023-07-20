@@ -38,12 +38,12 @@ def get_summary_batch_progress(json_data, query):
     formatted_time = current_time.strftime(time_format)
 
 
-    prompt = f"Given this Json data: {json_data}/n Give a summary of this data based on this query: {query} \
+    prompt = f"Given this Json data: {json_data}/n, Use bullet points  and a TABLE to give an executive summary of this data based on this query: {query} \
         for example, if the query is : tell me the progress of batch data/n, your answer should be the summary \
         of this json file provided. summarize it as sentences. start the sentence by saying 'As of {formatted_time} EST here is the summary \
-        of wealth management batch'. if the query is about a specific area, e.g if the query is tell me \
-        about the progress of mainframe batch or mainframe batch jobs, your answer should be the summary of only mainframe data."
-    
+        of wealth management batch'. Also replace all actual figures by calculating the percentage that figure represents. DO NOT INCLUDE THE ACTUAL TOTAL NUMBER OF JOBS, TOTAL NUMBER OF MILESTONES, ONLY SHOW THE PERCENTAGE OF COMPLETED JOBS.\
+        for example, you can say the Mainframe critical path is 40 % complete and it is currently tracked AMBER (status) and is expected to be completed by XXX(ETA). in your summary for each critical path, mention if there are delayed milestones in the critical path, you DONT NEED TO LIST THE MILESTONE JOB NAME, DESCRIPTION, AND FUNCTIONAL IMPACT IN THE SUMMARY, ONLY TALK ABOUT IT IN THE TABLE. if there is a delayed milestone job in each critical path, you should create a TABLE and list the delayed job names in a TABLE. The table should\
+        consist of 3 columns which is the Milestone Job name, description (which is the milestone_description in the json), and Functional Impact (which is the business functions impacted)." 
     headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
     messages = [{"role": "user", "content": prompt}]
     payload= {
@@ -119,10 +119,10 @@ def get_failed_jobs(job_name):
 
     
 def get_critical_job_failure(json_data, job_name):
-    prompt = f"This json data:{json_data} contains failed jobs that caused this job {job_name} to be held up.The json data has the information about failed jobs that \
-        is holding up {job_name}. only talk about the name of the failed job and nothing else in your sentences.\
-        Note: the job that failed in the json is a predecessor to this job {job_name}' make a reference to that in your sentence.\
-        you can start your sentence with '{job_name} is being delayed because (insert job name gotten from json here) failed.' your response should be concise and formal."
+    prompt = f"write an executive summary using This json data:{json_data}. do not make statements like 'According to the JSON DATA' in your sentence, it should not be known in your summary that you used a JSON data to get the summary. the json data contains the information of a failed job that caused this milestone job {job_name} to be delayed.\
+        the failed job from the json data is a critical job and predecessor to this milestone job {job_name}. so if the predecessor job failed, then the milestone job will be delayed. make sure to Mention The name of the failed job. You can get the name of the failed job from the json data.\
+        Note: the name of the job that failed in the json data is a critical job and a  predecessor to this milestone job {job_name}' make a reference to that in your sentence.\
+        your response should be concise and formal."
     
     headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
     messages = [{"role": "user", "content": prompt}]

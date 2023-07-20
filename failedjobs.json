@@ -2,7 +2,7 @@
     "failedjobs":[
         {
             "jobName": "PAAAD151",
-            "schedulingplatform": "mainframe/distributed",
+            "schedulingplatform": "mainframe",
             "actualStartTime": "8:00",
             "actualEndTime": "10:00",
             "status": "failed"

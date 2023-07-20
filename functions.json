@@ -47,7 +47,7 @@
 
                 {
                     "name": "get_failed_jobs",
-                    "description": " Called when the prompt specifically says 'what's holding up XXXXX' XXXXX is a placehollder for a job name. It can be ABCDE or ABCD. It takes in a query as an input and generates a response. ",
+                    "description": " Called when the prompt specifically says 'why a milestone job XXXXX is delayed.' XXXXX is a placehollder for a job name. It can be ABCDE or ABCD. It takes in a query as an input and generates a response. ",
                     "parameters":{
                         "type": "object",
                         "properties": {

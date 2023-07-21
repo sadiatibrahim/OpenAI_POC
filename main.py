@@ -81,8 +81,11 @@ def get_business_function(job_name):
         data = json.load(file)
 
     #call the function that summarizes the data
-    result = get_summary_business_functions(data, job_name)
-    return result
+    result = get_summary_business_functions(data, job_name).get("result", 'error')
+    resp = result['choices'][0]['message']['content']    
+    memory_buffer.save_context({'Human Input':query}, {'AI Response':resp})
+    
+    return resp
 
 def get_summary_business_functions(json_data, job_name):
     conversation_histoy = memory_buffer.load_memory_variables({})
@@ -122,15 +125,18 @@ def get_delayed_milestone_reason(job_name):
     with open('failedjobs.json') as file:
         data = json.load(file)
 
-    result = get_critical_job_failure(data, job_name)
-    return result
+    result = json.loads(get_critical_job_failure(data, job_name).get("result", 'error'))
+    resp = result['choices'][0]['message']['content']    
+    # memory_buffer.save_context({'Human Input':query}, {'AI Response':resp})
+    
+    return resp
     
 def get_critical_job_failure(json_data, job_name):
     conversation_histoy = memory_buffer.load_memory_variables({})
-    prompt = f"Current Conversation History: {conversation_histoy}\nwrite an executive summary using This json data:{json_data}. do not make statements like 'According to the JSON DATA' in your sentence, it should not be known in your summary that you used a JSON data to get the summary. the json data contains the information of a failed job that caused this milestone job {job_name} to be delayed.\
+    prompt = f"Current Conversation History: {conversation_histoy}\nwrite an executive summary using This json data:{json_data}. Do not include the batch progress from conversation history. provide targetted summary for this specific delayed job only. do not make statements like 'According to the JSON DATA' in your sentence, it should not be known in your summary that you used a JSON data to get the summary. the json data contains the information of a failed job that caused this milestone job {job_name} to be delayed.\
         the failed job from the json data is a critical job and predecessor to this milestone job {job_name}. so if the predecessor job failed, then the milestone job will be delayed. make sure to Mention The name of the failed job. You can get the name of the failed job from the json data.\
         Note: the name of the job that failed in the json data is a critical job and a  predecessor to this milestone job {job_name}' make a reference to that in your sentence.\
-        your response should be concise and formal."
+        your response should be concise and formal. Do not include conversation history in your summary for delayed job reasoning"
     
     headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
     messages = [{"role": "user", "content": prompt}]
@@ -162,12 +168,16 @@ def get_reason(job_name):
     with open('reason_failed_job.json') as file:
         data = json.load(file)
 
-    result = get_reason_summary(data, job_name)
-    return result
+    result = json.loads(get_reason_summary(data, job_name).get("result", 'error'))
+    print(result)
+    resp = result['choices'][0]['message']['content']    
+    # memory_buffer.save_context({'Human Input':query}, {'AI Response':resp})
+    
+    return resp
 
 def get_reason_summary(json_data, job_name):
     conversation_histoy = memory_buffer.load_memory_variables({})
-    prompt = f"Current Conversation History: {conversation_histoy}\nUsing this json data: {json_data}/n tell me the reason why this job: {job_name}failed. your sentence should be concise and formal."
+    prompt = f"Current Conversation History: {conversation_histoy}\nUsing this json data: {json_data}/n tell me the reason why this job: {job_name}failed."
     
     headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
     messages = [{"role": "user", "content": prompt}]
@@ -197,8 +207,11 @@ def get_delayed_milestones(query):
     with open('delayedmilestones.json') as file:
         data = json.load(file)
 
-    result = get_delayed_milestones_summary(data, query)
-    return result
+    result = json.loads(get_delayed_milestones_summary(data, query).get("result", 'error'))
+    resp = result['choices'][0]['message']['content']    
+    memory_buffer.save_context({'Human Input':query}, {'AI Response':resp})
+    
+    return resp
     
 def get_delayed_milestones_summary(json_data, query):
     conversation_histoy = memory_buffer.load_memory_variables({})
@@ -227,12 +240,31 @@ def get_delayed_milestones_summary(json_data, query):
 def get_incidents(query):
     pass;
 
-def get_standard_procedure(query):
-    print(f"--{datetime.now()}--get_standard_procedure")
-    embedded_file_location = 'embeddings/incident_sop'
-    original_file_locaiton = 'assets/INCIDENT_SOP.pdf'
-    # answer = embedded_data.crete_new_embeedings_from_pdf(query, original_file_locaiton)
-    answer = embedded_data.run_existing_embedding_from_faiss(query, embedded_file_location)
+def get_standard_procedure_or_fixlog(query):
+    print(f"--{datetime.now()}--get_standard_procedure_or_fixlog")
+    prompt = f"""You are an AI Bot, and your responsibility is to provide a standard operating procedure using fix logs. \
+        Please provide a detailed response about the fix. \
+        when providing the standard operating procedure. If some next steps include database queries required to solve the issue, \
+        please mention those database queries indivisually in a bulleted list\
+        For example if this is a sample question: What is the SOP for file contention\
+        Then your answer should be formatted in the following way: \n\
+        Start your answer with a description of the SOP. Provide any specific file or system names mentioned for that fix log.\
+        After the description divide the next steps or database queries (whatever is applicable) into different bullet points to make it \
+        more readable and human friendly Make sure all steps are broken down into bullets."""
+    # embedded_file_location = 'embeddings/incident_sop'
+    original_file_locaiton = 'assets/INCIDENT_SOP_NEW.pdf'
+    prompt = f"You are an AI Bot, and your responsibility is to provide a standard operating procedure using fix logs. \
+        Please provide a detailed response about the fix. \
+        when providing the standard operating procedure. If some next steps include database queries required to solve the issue, \
+        please mention those database queries indivisually in a bulleted list\
+        For example if this is a sample question: What is the SOP for file contention\
+        Then your answer should be formatted in the following way: \n\
+        This job has a resource requirement on the mainframe file PAAA.VSM.PAAAW151.CARDHIST.CLUSTER.\
+        If the Job fails due to contention of file PAAA.VSM.PAAAW151.CARDHIST.CLUSTER by holder CICS1513, follow below steps for the resolution:\
+        \n Start your answer with a description of the SOP, and then divide the steps into different bullet points to make it \
+        more readable and human friendly."
+    answer = embedded_data.crete_new_embeddings_from_pdf(query, prompt, original_file_locaiton)
+    # answer = embedded_data.run_existing_embedding_from_faiss(query, embedded_file_location)
     return answer;
 
 def main_function_call(query):
@@ -244,6 +276,7 @@ def main_function_call(query):
 
     prompt = f"You are an AI bot. I am providing you a function description,\
     use that and the user inputted query to return me function_call information.\
+    If query is listed as one of the parameters property, do not summarize user query, and pass exactly this query: {query} \
     It is also possible that user is asking some follow up question for some AI response you gave last time \
     and some argument for this new function might need to be predicted form \
     last user conversation. Only user history if you think its a follow up,Here is conversation history for your reference: \
@@ -279,11 +312,6 @@ def main():
         
         #function calls
         function_call_output = main_function_call(query_str)
-
-        print('\033[94m')
-        print('\n',function_call_output)
-        print('\033[0m')
-        
         function_name = eval(function_call_output['choices'][0]['message']['function_call']['name'])
         function_argument = json.loads(function_call_output['choices'][0]['message']['function_call']['arguments'])
 

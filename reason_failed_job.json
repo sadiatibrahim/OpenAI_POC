@@ -1,12 +1,12 @@
 {
-    "failedjobs":[
+    "failedjobs": [
         {
             "jobName": "PAAAD151",
             "schedulingplatform": "mainframe/distributed",
             "actualStartTime": "8:00",
             "actualEndTime": "10:00",
             "status": "failed",
-            "reason": "File Contention"
+            "reason": "File Contention \n. OIDC3300I ERROR OPENING PAAA.VSM.PAAAW151.CARDHIST.CLUSTER\nIDC3351I* ** VSAM OPEN RETURN CODE IS 168 \n OIDC3003I FUNCTION TERMINATED. CONDITION CODE IS 1"
         }
     ]
 }

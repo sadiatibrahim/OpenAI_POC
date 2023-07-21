@@ -4,7 +4,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from datetime import datetime, timedelta
 
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = ""
 
 class FunctionClassifier():
     def __init__(self):
@@ -68,16 +68,10 @@ class FunctionClassifier():
         # last_word = result.split()[-1]
         function_buffer_memory.save_context({"Human":query}, {"AI":str(trimmed_result[-3:])})
 
-        # if last_word.endswith('.'):
-        #     last_word = last_word[:-1]
-        print('\033[94m')
-        print('\n',result)
-        print('\033[0m')
-
         match = re.search(r"\d+", result)        
         if match:
             output_value = match.group()
             
 
-        print(f"\n--{datetime.now()}--FunctionClassifier::matching_index::", int(output_value))
+        print(f"--{datetime.now()}--FunctionClassifier::matching_index::", int(output_value))
         return [(self.data[int(output_value)])]

@@ -8,7 +8,7 @@ from langchain.chains import LLMChain
 from langchain.llms import OpenAI
 
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 date = datetime.now().date()
 previous_date = date - timedelta(days=1)
@@ -34,7 +34,7 @@ def get_batch_progress(query):
     return resp
 
 def get_summary_batch_progress(json_data, query):
-    print("--get_summary_batch_progress")
+    print(f'--{datetime.now()}--get_summary_batch_progress')
     # Get the current time
     current_time = datetime.now()
 
@@ -111,7 +111,7 @@ def get_summary_business_functions(json_data, job_name):
     # result = requests.post(url, headers=headers, data=data)
     # return result.text
 
-def get_failed_jobs(job_name):
+def get_delayed_milestone_reason(job_name):
 
     # #Make an API call
     # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/failure-analysis?date={previous_date}&job={job_name}"
@@ -276,7 +276,10 @@ def main():
         
         #function calls
         function_call_output = main_function_call(query_str)
-        print(function_call_output)
+
+        print('\033[94m')
+        print('\n',function_call_output)
+        print('\033[0m')
         
         function_name = eval(function_call_output['choices'][0]['message']['function_call']['name'])
         function_argument = json.loads(function_call_output['choices'][0]['message']['function_call']['arguments'])

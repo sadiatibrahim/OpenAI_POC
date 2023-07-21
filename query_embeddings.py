@@ -16,11 +16,11 @@ from langchain.llms import OpenAI
 from langchain import FAISS
 from datetime import datetime, timedelta
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 class QueryEmbeddedData():
     def __init__(self,memory_buffer=ConversationBufferMemory()):
-        self.open_api_key = "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"
+        self.open_api_key = os.environ.get("OPENAI_API_KEY")
         self.embeddings = OpenAIEmbeddings();
         self.llm_model  = OpenAI(openai_api_key=self.open_api_key, temperature=0.0,)    
         self.memory_buffer = memory_buffer

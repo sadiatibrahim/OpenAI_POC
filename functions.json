@@ -16,22 +16,6 @@
         }
     },
     {
-        "name": "get_delayed_milestones",
-        "description": "Called when the prompt specifically asks if there are any milestones delayed. it takes in a query and generates a response",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "A query is a statement that searches for delayed milestones. Uses the exact same question as the user prompted as input."
-                }
-            },
-            "required": [
-                "query"
-            ]
-        }
-    },
-    {
         "name": "get_business_function",
         "description": "Get a list of business functions that are impacted because of a delayed job XXXXX. note that job XXXXX is just a placeholder. job XXXXX can be any job name such as PPGET, ABCDE",
         "parameters": {
@@ -48,8 +32,8 @@
         }
     },
     {
-        "name": "get_failed_jobs",
-        "description": " Called when the prompt specifically says 'why a milestone job XXXXX is delayed.' XXXXX is a placehollder for a job name. It can be ABCDE or ABCD. It takes in a query as an input and generates a response. ",
+        "name": "get_delayed_milestone_reason",
+        "description": " Called when the user is asking about the reason for any delayed milestone. Use can specifically say 'why a milestone job XXXXX is delayed.' XXXXX is a placehollder for a job name. It can be ABCDE or ABCD. It takes in a query as an input and generates a response. It is also possible that user is asking a follow up question where job name is not specifically mentioned.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -81,13 +65,13 @@
     },
     {
         "name": "get_standard_procedure",
-        "description": "Takes in a query as an input and generates a response about standard operating procedure. It is useful for searching for standard operating procedure of an error",
+        "description": "Takes in a query as an input and generates a response about standard operating procedure. It is useful for searching for standard operating procedure of an error. Follow up question for SOP can be like, give me the database query to solve this issue.",
         "parameters": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "A query is a statement that searches for the standard operating procedure of an error"
+                    "description": "This must include exact user query entered by human searching for SOP procedures or next steps"
                 }
             },
             "required": [

@@ -263,7 +263,7 @@ def get_standard_procedure_or_fixlog(query):
         If the Job fails due to contention of file PAAA.VSM.PAAAW151.CARDHIST.CLUSTER by holder CICS1513, follow below steps for the resolution:\
         \n Start your answer with a description of the SOP, and then divide the steps into different bullet points to make it \
         more readable and human friendly."
-    answer = embedded_data.crete_new_embeedings_from_pdf(query, prompt, original_file_locaiton)
+    answer = embedded_data.crete_new_embeddings_from_pdf(query, prompt, original_file_locaiton)
     # answer = embedded_data.run_existing_embedding_from_faiss(query, embedded_file_location)
     return answer;
 

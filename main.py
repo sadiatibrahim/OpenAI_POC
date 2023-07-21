@@ -8,7 +8,7 @@ from langchain.chains import LLMChain
 from langchain.llms import OpenAI
 
 
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = ""
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 date = datetime.now().date()
 previous_date = date - timedelta(days=1)
@@ -85,7 +85,8 @@ def get_business_function(job_name):
     return result
 
 def get_summary_business_functions(json_data, job_name):
-    prompt = f"given this json data: {json_data}, write a summary of this json data in sentences. you can start your sentence by saying\
+    conversation_histoy = memory_buffer.load_memory_variables({})
+    prompt = f"Current Conversation History: {conversation_histoy}\ngiven this json data: {json_data}, write a summary of this json data in sentences. you can start your sentence by saying\
           'The business functions that are impacted because {job_name} is delayed are'. when you are done reading\
           the business functions, continue your sentence with 'and application impacted are'\
             then summarize the applicationsImpacted data list in the json.\
@@ -125,7 +126,8 @@ def get_delayed_milestone_reason(job_name):
     return result
     
 def get_critical_job_failure(json_data, job_name):
-    prompt = f"write an executive summary using This json data:{json_data}. do not make statements like 'According to the JSON DATA' in your sentence, it should not be known in your summary that you used a JSON data to get the summary. the json data contains the information of a failed job that caused this milestone job {job_name} to be delayed.\
+    conversation_histoy = memory_buffer.load_memory_variables({})
+    prompt = f"Current Conversation History: {conversation_histoy}\nwrite an executive summary using This json data:{json_data}. do not make statements like 'According to the JSON DATA' in your sentence, it should not be known in your summary that you used a JSON data to get the summary. the json data contains the information of a failed job that caused this milestone job {job_name} to be delayed.\
         the failed job from the json data is a critical job and predecessor to this milestone job {job_name}. so if the predecessor job failed, then the milestone job will be delayed. make sure to Mention The name of the failed job. You can get the name of the failed job from the json data.\
         Note: the name of the job that failed in the json data is a critical job and a  predecessor to this milestone job {job_name}' make a reference to that in your sentence.\
         your response should be concise and formal."
@@ -164,8 +166,8 @@ def get_reason(job_name):
     return result
 
 def get_reason_summary(json_data, job_name):
-
-    prompt = f"Using this json data: {json_data}/n tell me the reason why this job: {job_name}failed. your sentence should be concise and formal."
+    conversation_histoy = memory_buffer.load_memory_variables({})
+    prompt = f"Current Conversation History: {conversation_histoy}\nUsing this json data: {json_data}/n tell me the reason why this job: {job_name}failed. your sentence should be concise and formal."
     
     headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
     messages = [{"role": "user", "content": prompt}]
@@ -199,7 +201,8 @@ def get_delayed_milestones(query):
     return result
     
 def get_delayed_milestones_summary(json_data, query):
-    prompt = f"Give a summary of this json data {json_data}\n\
+    conversation_histoy = memory_buffer.load_memory_variables({})
+    prompt = f"Current Conversation History: {conversation_histoy}\nGive a summary of this json data {json_data}\n\
         your answer should be a sentence, and it should be concise and formal. you can use this query: {query} as a reference for your sentence."
     
     headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}

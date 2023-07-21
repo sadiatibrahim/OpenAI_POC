@@ -253,16 +253,6 @@ def get_standard_procedure_or_fixlog(query):
         more readable and human friendly Make sure all steps are broken down into bullets."""
     # embedded_file_location = 'embeddings/incident_sop'
     original_file_locaiton = 'assets/INCIDENT_SOP_NEW.pdf'
-    prompt = f"You are an AI Bot, and your responsibility is to provide a standard operating procedure using fix logs. \
-        Please provide a detailed response about the fix. \
-        when providing the standard operating procedure. If some next steps include database queries required to solve the issue, \
-        please mention those database queries indivisually in a bulleted list\
-        For example if this is a sample question: What is the SOP for file contention\
-        Then your answer should be formatted in the following way: \n\
-        This job has a resource requirement on the mainframe file PAAA.VSM.PAAAW151.CARDHIST.CLUSTER.\
-        If the Job fails due to contention of file PAAA.VSM.PAAAW151.CARDHIST.CLUSTER by holder CICS1513, follow below steps for the resolution:\
-        \n Start your answer with a description of the SOP, and then divide the steps into different bullet points to make it \
-        more readable and human friendly."
     answer = embedded_data.crete_new_embeddings_from_pdf(query, prompt, original_file_locaiton)
     # answer = embedded_data.run_existing_embedding_from_faiss(query, embedded_file_location)
     return answer;

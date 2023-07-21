@@ -1,4 +1,4 @@
-import openai,requests,json,os,pytz
+import openai,requests,json,os,pytz, utils
 from datetime import datetime, timedelta
 from functionclassifier import FunctionClassifier
 from query_embeddings import QueryEmbeddedData
@@ -8,7 +8,6 @@ from langchain.chains import LLMChain
 from langchain.llms import OpenAI
 
 
-os.environ["OPENAI_API_KEY"] = ""
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 date = datetime.now().date()
 previous_date = date - timedelta(days=1)
@@ -19,11 +18,6 @@ llm = OpenAI(openai_api_key=OPENAI_API_KEY, temperature=0.0,)
 function_classifier = FunctionClassifier()
 
 def get_batch_progress(query):
-    #make an API call
-    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/batch-summary?date={previous_date}"
-    # data = requests.get(url)
-
-    #Assume this process is connecting to API and getting json data
     with open('summaryAPI.json') as file:
         data = json.load(file)
 
@@ -54,73 +48,11 @@ def get_summary_batch_progress(json_data, query):
         for example, you can say the Mainframe critical path is 40 % complete and it is currently tracked AMBER (status) and is expected to be completed by XXX(ETA). in your summary for each critical path, mention if there are delayed milestones in the critical path, you DONT NEED TO LIST THE MILESTONE JOB NAME, DESCRIPTION, AND FUNCTIONAL IMPACT IN THE SUMMARY, ONLY TALK ABOUT IT IN THE TABLE. if there is a delayed milestone job in each critical path, you should create a TABLE and list the delayed job names in a TABLE. The table should\
         consist of 3 columns which is the Milestone Job name, description (which is the milestone_description in the json), and Functional Impact (which is the business functions impacted)." 
     
-    headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
-    messages = [{"role": "user", "content": prompt}]
-    payload= {
-      "model":"gpt-3.5-turbo-0613",
-      "messages": messages,
-      "max_tokens" : 1024,
-      "temperature" : 0
-    }
+    result = utils.call_chat_completions(prompt)
+    return result
 
-    try:
-        result = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(payload))
-    except Exception as e:
-        return {'status': -1, 'error': 'Error occured' + str(e)}
-    
-    return {'status':0, 'result': result.text}
-
-def get_business_function(job_name):
-
-    # #make an API call
-    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/business-functions?date={previous_date}&job={job_name}"
-    # data = requests.get(url)
-
-    #Assume this process is connecting to API and getting json data
-    with open('businessfunctionsAPI.json') as file:
-        data = json.load(file)
-
-    #call the function that summarizes the data
-    result = get_summary_business_functions(data, job_name).get("result", 'error')
-    resp = result['choices'][0]['message']['content']    
-    memory_buffer.save_context({'Human Input':query}, {'AI Response':resp})
-    
-    return resp
-
-def get_summary_business_functions(json_data, job_name):
-    conversation_histoy = memory_buffer.load_memory_variables({})
-    prompt = f"Current Conversation History: {conversation_histoy}\ngiven this json data: {json_data}, write a summary of this json data in sentences. you can start your sentence by saying\
-          'The business functions that are impacted because {job_name} is delayed are'. when you are done reading\
-          the business functions, continue your sentence with 'and application impacted are'\
-            then summarize the applicationsImpacted data list in the json.\
-            your summary should be concise and formal."
-    headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
-    messages = [{"role": "user", "content": prompt}]
-
-    payload = {"model" : "gpt-3.5-turbo-0613",
-               "messages" : messages,
-               "temperature" : 0.0,
-               "top_p" : 1.0,
-               "frequency_penalty": 0.0,
-               "presence_penalty" : 0.0,
-               "max_tokens" : 1000
-    }
-    data = json.dumps(payload).encode('utf-8')
-    try:
-        result = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(payload))
-    except Exception as e:
-        return {'status': -1, 'error': 'Error occured' + str(e)}
-    
-    return {'status':0, 'result': result.text}
-    # result = requests.post(url, headers=headers, data=data)
-    # return result.text
 
 def get_delayed_milestone_reason(job_name):
-
-    # #Make an API call
-    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/failure-analysis?date={previous_date}&job={job_name}"
-    # data = requests.get(url)
-
     #Assume this process is connecting to API and getting json data
     with open('failedjobs.json') as file:
         data = json.load(file)
@@ -138,107 +70,32 @@ def get_critical_job_failure(json_data, job_name):
         Note: the name of the job that failed in the json data is a critical job and a  predecessor to this milestone job {job_name}' make a reference to that in your sentence.\
         your response should be concise and formal. Do not include conversation history in your summary for delayed job reasoning"
     
-    headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
-    messages = [{"role": "user", "content": prompt}]
+    result = utils.call_chat_completions(prompt)
+    return result
 
-    payload = {"model" : "gpt-3.5-turbo-0613",
-               "messages" : messages,
-               "temperature" : 0.0,
-               "top_p" : 1.0,
-               "frequency_penalty": 0.0,
-               "presence_penalty" : 0.0,
-               "max_tokens" : 1000
-    }
-    data = json.dumps(payload).encode('utf-8')
-    try:
-        result = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(payload))
-    except Exception as e:
-        return {'status': -1, 'error': 'Error occured' + str(e)}
-    
-    return {'status':0, 'result': result.text}
 
-def get_reason(job_name):
-
-    #Make an API call
-    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/impact-analysis?date={previous_date}&job={job_name}"
-    # data = requests.get(url)
-
-    #Assume this process is connecting to API and getting json data
+def get_failure_reason(job_name):
 
     with open('reason_failed_job.json') as file:
         data = json.load(file)
 
-    result = json.loads(get_reason_summary(data, job_name).get("result", 'error'))
+    result = json.loads(get_failure_reason_summary(data, job_name).get("result", 'error'))
     print(result)
     resp = result['choices'][0]['message']['content']    
     # memory_buffer.save_context({'Human Input':query}, {'AI Response':resp})
     
     return resp
 
-def get_reason_summary(json_data, job_name):
+def get_failure_reason_summary(json_data, job_name):
     conversation_histoy = memory_buffer.load_memory_variables({})
     prompt = f"Current Conversation History: {conversation_histoy}\nUsing this json data: {json_data}/n tell me the reason why this job: {job_name}failed."
     
-    headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
-    messages = [{"role": "user", "content": prompt}]
+    result = utils.call_chat_completions(prompt)
+    return result
 
-    payload = {"model" : "gpt-3.5-turbo-0613",
-               "messages" : messages,
-               "temperature" : 0.0,
-               "top_p" : 1.0,
-               "frequency_penalty": 0.0,
-               "presence_penalty" : 0.0,
-               "max_tokens" : 1000
-    }
-    data = json.dumps(payload).encode('utf-8')
-    try:
-        result = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(payload))
-    except Exception as e:
-        return {'status': -1, 'error': 'Error occured' + str(e)}
-    
-    return {'status':0, 'result': result.text}
-
-def get_delayed_milestones(query):
-
-    #make an API call
-    # url = f"https://tereoservices.webfarm-dev.ms.com:12660/tereoservices/delayed-milestones?date={previous_date}"
-    # data = requests.get(url)
-
-    with open('delayedmilestones.json') as file:
-        data = json.load(file)
-
-    result = json.loads(get_delayed_milestones_summary(data, query).get("result", 'error'))
-    resp = result['choices'][0]['message']['content']    
-    memory_buffer.save_context({'Human Input':query}, {'AI Response':resp})
-    
-    return resp
-    
-def get_delayed_milestones_summary(json_data, query):
-    conversation_histoy = memory_buffer.load_memory_variables({})
-    prompt = f"Current Conversation History: {conversation_histoy}\nGive a summary of this json data {json_data}\n\
-        your answer should be a sentence, and it should be concise and formal. you can use this query: {query} as a reference for your sentence."
-    
-    headers = {'content-type':'application/json', "Authorization": "Bearer" + " " + OPENAI_API_KEY}
-    messages = [{"role": "user", "content": prompt}]
-
-    payload = {"model" : "gpt-3.5-turbo-0613",
-               "messages" : messages,
-               "temperature" : 0.0,
-               "top_p" : 1.0,
-               "frequency_penalty": 0.0,
-               "presence_penalty" : 0.0,
-               "max_tokens" : 1000
-    }
-    data = json.dumps(payload).encode('utf-8')
-    try:
-        result = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, data=json.dumps(payload))
-    except Exception as e:
-        return {'status': -1, 'error': 'Error occured' + str(e)}
-    
-    return {'status':0, 'result': result.text}
 
 def get_incidents(query):
-    pass;
+    pass
 
 def get_standard_procedure_or_fixlog(query):
     print(f"--{datetime.now()}--get_standard_procedure_or_fixlog")
@@ -253,9 +110,9 @@ def get_standard_procedure_or_fixlog(query):
         more readable and human friendly Make sure all steps are broken down into bullets."""
     # embedded_file_location = 'embeddings/incident_sop'
     original_file_locaiton = 'assets/INCIDENT_SOP_NEW.pdf'
-    answer = embedded_data.crete_new_embeddings_from_pdf(query, prompt, original_file_locaiton)
+    answer = embedded_data.create_new_embeddings_from_pdf(query, prompt, original_file_locaiton)
     # answer = embedded_data.run_existing_embedding_from_faiss(query, embedded_file_location)
-    return answer;
+    return answer
 
 def main_function_call(query):
     url = "https://api.openai.com/v1/chat/completions"

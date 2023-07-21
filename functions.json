@@ -48,7 +48,7 @@
         }
     },
     {
-        "name": "get_reason",
+        "name": "get_failure_reason",
         "description": "Used to get the reason for failure for a specific job.",
         "parameters": {
             "type": "object",

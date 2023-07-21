@@ -4,7 +4,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from datetime import datetime, timedelta
 
-OPENAI_API_KEY = ""
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
 class FunctionClassifier():
     def __init__(self):
@@ -23,23 +23,6 @@ class FunctionClassifier():
         function_desc = self.get_function_descriptions()
         prompt = PromptTemplate(
             input_variables=['chat_history','function_desc', 'query'],
-            # template= """
-            # Current Converstion Histoy:
-            # {chat_history}
-            # Instruction Set:
-            # Provided this list of function definitions Definitions :{function_desc} , take this Query : {query} and match the query
-            # with a single function's description. If it is found that the query does not match a single function's description,
-            # return -1. Otherwise, ensure that the query matches the first of the query that you as an AI can 
-            # generate a classification for which query matches the definition. If a match is found, return the index of the function description from the list. \
-            # Take Current Converstion Histoy into classification consideration to match follow up questions. If you feel user is asking about a follow up, 
-            # your classification should inclined towards the function you predicted last time.
-            # If the question is asking about some standard problem they are facing, or maybe looking for next steps be inclined towards  get_standard_procedure. \
-            # if user is asking following up steps for database or command line, their next steps could be available in standard procedure if that is the method\
-            # selected last time in the conversation history.
-            # Make sure to process each decription carefully when classifying which description matches the query. 
-            # Provide me details of how you classified the above question to its corresponding function.
-            # In the last line of your result, always return the matching index so i can directly retrieve the matching function from the functions json
-            # Index always starts from 0, so if function 1 matches that is 0 index, and so on.""",
             template = """
             You are an AI bot, you are communicating with a system which needs you to predict the most relevent function for the user query.
             \nCurrent Converstaion History: 

@@ -23,12 +23,12 @@ from langchain.prompts import (
     HumanMessagePromptTemplate,
 )
 
-os.environ["OPENAI_API_KEY"] = ""
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
 class QueryEmbeddedData():
     def __init__(self,memory_buffer=ConversationBufferMemory()):
         self.open_api_key = os.environ.get("OPENAI_API_KEY")
-        self.embeddings = OpenAIEmbeddings();
+        self.embeddings = OpenAIEmbeddings()
         self.llm_model  = OpenAI(openai_api_key=self.open_api_key, temperature=0.0)    
         self.memory_buffer = memory_buffer
 
@@ -38,7 +38,7 @@ class QueryEmbeddedData():
         chain = ConversationalRetrievalChain.from_llm(self.llm_model, vector_store.as_retriever(),memory=self.memory_buffer)
         return self._call_chain_and_get_result(user_query,vector_store)
 
-    def crete_new_embeddings_from_pdf(self,user_query,prompt,pdf_file_location):
+    def create_new_embeddings_from_pdf(self,user_query,prompt,pdf_file_location):
         print(f'--{datetime.now()}--crete_new_embeddings_from_pdf--with--prompt')
         loader = PyPDFLoader(pdf_file_location)
         document = loader.load_and_split(self._get_text_splitter())
@@ -48,7 +48,7 @@ class QueryEmbeddedData():
     def _call_chain_and_get_result(self,user_query,vector_store):
         chain = ConversationalRetrievalChain.from_llm(self.llm_model, vector_store.as_retriever(),memory=self.memory_buffer)
         result = chain({"question":user_query})
-        return result['answer'];
+        return result['answer']
 
     def _call_chain_custom_prompt(self,question,prompt,vector_store):
         LLM_PROMPT = prompt + """ 
@@ -65,7 +65,7 @@ class QueryEmbeddedData():
             memory=self.memory_buffer,
             combine_docs_chain_kwargs={"prompt": QA_PROMPT})
         result = chain({"question":question})
-        return result['answer'];
+        return result['answer']
     
     def _get_text_splitter(self):
         return CharacterTextSplitter(separator='\n',chunk_size=2000,chunk_overlap=200,length_function=len)
